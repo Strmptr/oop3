@@ -14,23 +14,17 @@ namespace Lab3.Classes
 {
     class Route_c : MapObject
     {
-        PointLatLng point = new PointLatLng();
         List<PointLatLng> points = new List<PointLatLng>();
-        public Route_c(string name, List<PointLatLng> Points, PointLatLng Point) : base(name)
+        public Route_c(string name, List<PointLatLng> Points) : base(name)
         {
-            point = Point;
             points = Points;
-        }
-        public override string getTitle()
-        {
-            return objectName;
         }
 
         
         public override double getDistance(PointLatLng pointtwo)
         {
             GeoCoordinate geo1 = new GeoCoordinate(pointtwo.Lat, pointtwo.Lng);
-            GeoCoordinate geo2 = new GeoCoordinate(point.Lat, point.Lng);
+            GeoCoordinate geo2 = new GeoCoordinate(points[0].Lat, points[0].Lng);
             double distance = geo1.GetDistanceTo(geo2);
             for (int i = 0; i < points.Count; i++)
             {
@@ -43,7 +37,7 @@ namespace Lab3.Classes
 
         public override PointLatLng getFocus()
         {
-            return point;
+            return points.Last();
         }
 
         public override GMapMarker GetMarker()
@@ -54,15 +48,12 @@ namespace Lab3.Classes
                 {
                     Stroke = Brushes.DarkBlue,
                     Fill = Brushes.DarkBlue,
-                    StrokeThickness = 4
+                    StrokeThickness = 4,
+                    ToolTip = objectName
                 }
             };
             return marker;
         }
 
-        public override DateTime getCreationDate()
-        {
-            return new DateTime();
-        }
     }
 }

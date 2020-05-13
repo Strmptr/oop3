@@ -17,6 +17,7 @@ using GMap.NET.MapProviders;
 using GMap.NET.WindowsPresentation;
 using System.Device.Location;
 using Lab3.Classes;
+using System.Linq.Expressions;
 
 namespace Lab3
 {
@@ -35,6 +36,7 @@ namespace Lab3
         {
             InitializeComponent();
             MapLoad();
+            createrb.IsChecked = true;
         }
 
         private void MapLoad()
@@ -65,44 +67,12 @@ namespace Lab3
         {
             if (creationmode == true)
             {
-                if (combox.SelectedIndex == 0)
-                {
-                    point = Map.FromLocalToLatLng((int)e.GetPosition(Map).X, (int)e.GetPosition(Map).Y);
-                    createra.IsEnabled = true;
-                }
-                if (combox.SelectedIndex == 1)
-                {
-                    point = Map.FromLocalToLatLng((int)e.GetPosition(Map).X, (int)e.GetPosition(Map).Y);
-                    createra.IsEnabled = true;
-                }
-                if (combox.SelectedIndex == 2)
-                {
-                    point = Map.FromLocalToLatLng((int)e.GetPosition(Map).X, (int)e.GetPosition(Map).Y);
-                    createra.IsEnabled = true;
-                }
-                if (combox.SelectedIndex == 3)
-                {
-                    point = Map.FromLocalToLatLng((int)e.GetPosition(Map).X, (int)e.GetPosition(Map).Y);
-                    routepoints.Add(point);
-                    rpointc += 1;
-                    if (rpointc >= 2)
-                    {
-                        createra.IsEnabled = true;
-                        clearpoints.IsEnabled = true;
-                    }
-                }
-                if (combox.SelectedIndex == 4)
-                {
-                    point = Map.FromLocalToLatLng((int)e.GetPosition(Map).X, (int)e.GetPosition(Map).Y);
+                
+                   var point = Map.FromLocalToLatLng((int)e.GetPosition(Map).X, (int)e.GetPosition(Map).Y);
                     areapoints.Add(point);
-                    apointc += 1;
-                    if (apointc >= 3)
-                    {
-                        createra.IsEnabled = true;
-                        clearpoints.IsEnabled = true;
-                    }
-                }
-            }
+                    
+             }
+            
             else
             {
                 OList.Items.Clear();
@@ -126,50 +96,47 @@ namespace Lab3
 
         }
 
-        public void placepoint(PointLatLng point)
+
+        public void createMarker(List<PointLatLng> points, int index)
         {
-            MapObject mapObject_point = new Location_c(OName.Text ,point);
-            mapObjects.Add(mapObject_point);
-            Map.Markers.Add(mapObject_point.GetMarker());
-            OList.Items.Add( mapObjects.Last().objectName);
-            createra.IsEnabled = false;
+            MapObject mapObject = null;
+            switch (index)
+            {
+                case 4:
+                    {
+                        mapObject = new Area(OName.Text, points);
+                        break;
+                    }
+                case 0:
+                    {
+                        mapObject = new Location_c(OName.Text, points.Last());
+                        break;
+                    }
+                case 1:
+                    {
+                        mapObject = new Car(OName.Text, points.Last());
+                        break;
+                    }
+                case 2:
+                    {
+                        mapObject = new Human(OName.Text, points.Last());
+                        break;
+                    }
+                case 3:
+                    {
+                        mapObject = new Route_c(OName.Text, points);
+                        break;
+                    }
+
+            }
+            if (mapObject != null)
+            {
+                mapObjects.Add(mapObject);
+                Map.Markers.Add(mapObject.GetMarker());
+            }
         }
-        public void placecar(PointLatLng point)
-        {
-            MapObject mapObject_point = new Car(OName.Text,  point);
-            mapObjects.Add(mapObject_point);
-            Map.Markers.Add(mapObject_point.GetMarker());
-            OList.Items.Add(mapObjects.Last().objectName);
-            createra.IsEnabled = false;
-        }
-        public void placehuman(PointLatLng point)
-        {
-            MapObject mapObject_point = new Human(OName.Text,  point);
-            mapObjects.Add(mapObject_point);
-            Map.Markers.Add(mapObject_point.GetMarker());
-            OList.Items.Add(mapObjects.Last().objectName);
-            createra.IsEnabled = false;
-        }
-        public void createroute(List <PointLatLng>points)
-        {
-            rpointc = 0;
-            MapObject mapObject_path = new Route_c(OName.Text,  points, points[0]);
-            mapObjects.Add(mapObject_path);
-            Map.Markers.Add(mapObject_path.GetMarker());
-            OList.Items.Add(mapObjects.Last().objectName);
-            createra.IsEnabled = false;
-            clearpoints.IsEnabled = false;
-        }
-        public void createarea(List <PointLatLng>points)
-        {
-            apointc = 0;
-            MapObject mapObject_area = new Area(OName.Text,  points, points[0]);
-            mapObjects.Add(mapObject_area);
-            Map.Markers.Add(mapObject_area.GetMarker());
-            OList.Items.Add(mapObjects.Last().objectName);
-            createra.IsEnabled = false;
-            clearpoints.IsEnabled = false;
-        }
+
+        
 
         private void OList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -188,64 +155,52 @@ namespace Lab3
 
         private void Createra_Click(object sender, RoutedEventArgs e)
         {
-            if (OName.Text == "")
-            {
-                MessageBox.Show("Object name is null");
-            }
-            else
-            {
-                if (combox.SelectedIndex == 0)
-                {
-                    placepoint(point);
-                }
-                if (combox.SelectedIndex == 1)
-                {
-                    placecar(point);
-                }
-                if (combox.SelectedIndex == 2)
-                {
-                    placehuman(point);
-                }
-                if (combox.SelectedIndex == 3)
-                {
-                    createroute(routepoints);
-                }
-                if (combox.SelectedIndex == 4)
-                {
-                    createarea(areapoints);
-                }
-                OName.Text = "";
 
-                locate.IsEnabled = true;
-                objfind.IsEnabled = true;
-                clearpoints.IsEnabled = false;
-                routepoints = new List<PointLatLng>();
-                areapoints = new List<PointLatLng>();
-            }
-            OList.Items.Clear();
-            for (int i = 0; i < mapObjects.Count; i++)
+            try
             {
-                if (i == 0)
+                if (OName.Text == "")
                 {
-                    OList.Items.Add(null);
-                    OList.Items.Add(mapObjects[i].objectName);
+                    MessageBox.Show("Object name is null");
                 }
                 else
                 {
-                    OList.Items.Add(mapObjects[i].objectName);
-                }
-            }
-            secondact = false;
-        }
+                    createMarker(areapoints, combox.SelectedIndex);
+                    OName.Text = "";
 
+                    locate.IsEnabled = true;
+                    objfind.IsEnabled = true;
+                    clearpoints.IsEnabled = false;
+                    areapoints = new List<PointLatLng>();
+                }
+                OList.Items.Clear();
+                for (int i = 0; i < mapObjects.Count; i++)
+                {
+                    if (i == 0)
+                    {
+                        OList.Items.Add(null);
+                        OList.Items.Add(mapObjects[i].objectName);
+                    }
+                    else
+                    {
+                        OList.Items.Add(mapObjects[i].objectName);
+                    }
+                }
+                secondact = false;
+            }
+            catch
+            {
+                MessageBox.Show("Выберите место");
+            }
+
+
+        }
         private void Combox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            createra.IsEnabled = false;
-            clearpoints.IsEnabled = false;
+            createra.IsEnabled = true;
+            clearpoints.IsEnabled = true;
             rpointc = 0;
             apointc = 0;
-            areapoints = new List<PointLatLng>();
-            routepoints = new List<PointLatLng>();
+          //  areapoints = new List<PointLatLng>();
         }
 
         private void Findrb_Checked(object sender, RoutedEventArgs e)
@@ -288,7 +243,7 @@ namespace Lab3
 
                     if (i == 0)
                     {
-                        OList.Items.Add(null);
+                      OList.Items.Add(null);
                         if (mapObjects[i].objectName.Contains(objfind.Text))
                         {
                             OList.Items.Add( mapObjects[i].objectName);
@@ -318,8 +273,8 @@ namespace Lab3
             apointc = 0;
             areapoints = new List<PointLatLng>();
             routepoints = new List<PointLatLng>();
-            clearpoints.IsEnabled = false;
-            createra.IsEnabled = false;
+            clearpoints.IsEnabled = true;
+            createra.IsEnabled = true;
         }
 
         private void OName_TextChanged(object sender, TextChangedEventArgs e)

@@ -32,10 +32,6 @@ namespace Lab3.Classes
             return point;
         }
 
-        public override DateTime getCreationDate()
-        {
-            return creationTime;
-        }
 
         public override GMapMarker GetMarker()
         {
@@ -45,17 +41,13 @@ namespace Lab3.Classes
                 {
                     Width = 32,
                     Height = 32,
-                    ToolTip = "машина",
+                    ToolTip = objectName,
                     Source = new BitmapImage(new Uri("pack://application:,,,/Resources/car.png"))
                 }
             };
             return marker;
         }
 
-        public override string getTitle()
-        {
-            return objectName;
-        }
 
        
     }

@@ -32,14 +32,6 @@ namespace Lab3
             return point;
         }
 
-        public override string getTitle()
-        {
-            return objectName;
-        }
-        public override DateTime getCreationDate()
-        {
-            return creationTime;
-        }
         public override GMapMarker GetMarker()
         {
             GMapMarker marker = new GMapMarker(point)
@@ -48,7 +40,7 @@ namespace Lab3
                 {
                     Width = 32,
                     Height = 32,
-                    ToolTip = "Человек",
+                    ToolTip = objectName,
                     Source = new BitmapImage(new Uri("pack://application:,,,/Resources/men.png"))
                 }
             };

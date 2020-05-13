@@ -12,9 +12,8 @@ namespace Lab3
 {
     public abstract class MapObject
     {
-        public string objectName;
-        public string objectType;
-        public DateTime creationTime;
+       public string objectName;
+       public DateTime creationTime;
         public MapObject(string name)
         {
             
@@ -22,11 +21,15 @@ namespace Lab3
             creationTime = DateTime.Now;
         }
 
-        public abstract string getTitle();
+        public string getTitle()
+        {
+            return objectName;
+        }
 
-        
-
-        public abstract DateTime getCreationDate();
+        public DateTime getCreationDate()
+        {
+            return creationTime;
+        }
 
         public abstract double getDistance(PointLatLng pointtwo);
 
