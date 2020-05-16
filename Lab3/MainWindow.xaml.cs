@@ -28,7 +28,7 @@ namespace Lab3
           List<PointLatLng> areapoints = new List<PointLatLng>();
           List<PointLatLng> routepoints = new List<PointLatLng>();
         bool creationmode = false;
-        private bool secondact = false;
+        bool secondact = false;
         public MainWindow()
         {
             InitializeComponent();
