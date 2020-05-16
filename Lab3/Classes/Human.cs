@@ -40,7 +40,7 @@ namespace Lab3
                 {
                     Width = 32,
                     Height = 32,
-                    ToolTip = objectName,
+                    ToolTip = getTitle(),
                     Source = new BitmapImage(new Uri("pack://application:,,,/Resources/men.png"))
                 }
             };

@@ -12,8 +12,8 @@ namespace Lab3
 {
     public abstract class MapObject
     {
-       public string objectName;
-       public DateTime creationTime;
+        private string objectName;
+        private DateTime creationTime;
         public MapObject(string name)
         {
             

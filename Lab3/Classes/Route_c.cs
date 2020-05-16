@@ -49,7 +49,7 @@ namespace Lab3.Classes
                     Stroke = Brushes.DarkBlue,
                     Fill = Brushes.DarkBlue,
                     StrokeThickness = 4,
-                    ToolTip = objectName
+                    ToolTip = getTitle()
                 }
             };
             return marker;

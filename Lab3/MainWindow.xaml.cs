@@ -17,21 +17,18 @@ using GMap.NET.MapProviders;
 using GMap.NET.WindowsPresentation;
 using System.Device.Location;
 using Lab3.Classes;
-using System.Linq.Expressions;
 
 namespace Lab3
 {
     public partial class MainWindow : Window
     {
-        public List<MapObject> mapObjects = new List<MapObject>();
-        public List<MapObject> secondList = new List<MapObject>();
-        public PointLatLng point = new PointLatLng();
-        public List<PointLatLng> areapoints = new List<PointLatLng>();
-        public List<PointLatLng> routepoints = new List<PointLatLng>();
-        int rpointc = 0;
-        int apointc = 0;
+         List<MapObject> mapObjects = new List<MapObject>();
+          List<MapObject> secondList = new List<MapObject>();
+          PointLatLng point = new PointLatLng();
+          List<PointLatLng> areapoints = new List<PointLatLng>();
+          List<PointLatLng> routepoints = new List<PointLatLng>();
         bool creationmode = false;
-        bool secondact = false;
+        //private bool secondact = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -65,19 +62,16 @@ namespace Lab3
 
         private void Map_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            PointLatLng point = Map.FromLocalToLatLng((int)e.GetPosition(Map).X, (int)e.GetPosition(Map).Y);
             if (creationmode == true)
             {
-                
-                   var point = Map.FromLocalToLatLng((int)e.GetPosition(Map).X, (int)e.GetPosition(Map).Y);
-                    areapoints.Add(point);
-                    
+                    areapoints.Add(point);  
              }
             
             else
             {
                 OList.Items.Clear();
-                OList.Items.Add(null);
-                PointLatLng point = Map.FromLocalToLatLng((int)e.GetPosition(Map).X, (int)e.GetPosition(Map).Y);
+               // OList.Items.Add(null);
                 secondList = mapObjects.OrderBy(mobject => mobject.getDistance(point)).ToList();
                 foreach (MapObject obj in secondList)
                 {
@@ -97,7 +91,7 @@ namespace Lab3
         }
 
 
-        public void createMarker(List<PointLatLng> points, int index)
+        private void createMarker(List<PointLatLng> points, int index)
         {
             MapObject mapObject = null;
             switch (index)
@@ -136,70 +130,63 @@ namespace Lab3
             }
         }
 
-        
+
 
         private void OList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (OList.SelectedIndex > 0 && secondact == false)
+            if (mapObjects.Count != 0)
             {
-                Map.Position = mapObjects[OList.SelectedIndex - 1].getFocus();
-            }
-            else
-            {
-                if(OList.SelectedIndex > 0)
+                if (OList.SelectedItem != null)
                 {
-                    Map.Position = secondList[OList.SelectedIndex - 1].getFocus();
+                    foreach (MapObject obm in mapObjects)
+                    {
+                        if (obm.getTitle() == (string)OList.SelectedItem)
+                        {
+                            Map.Position = obm.getFocus();
+                        }
+                    }
+                   
                 }
             }
         }
 
         private void Createra_Click(object sender, RoutedEventArgs e)
         {
-
-            try
+            if (OName.Text == "")
             {
-                if (OName.Text == "")
+                MessageBox.Show("Object name is null");
+            }
+            else
+            {
+                createMarker(areapoints, combox.SelectedIndex);
+                OName.Text = "";
+
+                locate.IsEnabled = true;
+                objfind.IsEnabled = true;
+                clearpoints.IsEnabled = false;
+                areapoints = new List<PointLatLng>();
+            }
+            OList.Items.Clear();
+            for (int i = 0; i < mapObjects.Count; i++)
+            {
+                if (i == 0)
                 {
-                    MessageBox.Show("Object name is null");
+                   // OList.Items.Add(null);
+                    OList.Items.Add(mapObjects[i].getTitle());
                 }
                 else
                 {
-                    createMarker(areapoints, combox.SelectedIndex);
-                    OName.Text = "";
-
-                    locate.IsEnabled = true;
-                    objfind.IsEnabled = true;
-                    clearpoints.IsEnabled = false;
-                    areapoints = new List<PointLatLng>();
+                    OList.Items.Add(mapObjects[i].getTitle());
                 }
-                OList.Items.Clear();
-                for (int i = 0; i < mapObjects.Count; i++)
-                {
-                    if (i == 0)
-                    {
-                        OList.Items.Add(null);
-                        OList.Items.Add(mapObjects[i].objectName);
-                    }
-                    else
-                    {
-                        OList.Items.Add(mapObjects[i].objectName);
-                    }
-                }
-                secondact = false;
             }
-            catch
-            {
-                MessageBox.Show("Выберите место");
-            }
-
-
+            secondact = false;
         }
+
         private void Combox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             createra.IsEnabled = true;
             clearpoints.IsEnabled = true;
-            rpointc = 0;
-            apointc = 0;
+           
           //  areapoints = new List<PointLatLng>();
         }
 
@@ -224,12 +211,12 @@ namespace Lab3
                 {
                     if (i == 0)
                     {
-                        OList.Items.Add(null);
-                        OList.Items.Add( mapObjects[i].objectName);
+                       // OList.Items.Add(null);
+                        OList.Items.Add( mapObjects[i].getTitle());
                     }
                     else
                     {
-                        OList.Items.Add( mapObjects[i].objectName);
+                        OList.Items.Add( mapObjects[i].getTitle());
                     }
                 }
                 secondact = false;
@@ -243,18 +230,18 @@ namespace Lab3
 
                     if (i == 0)
                     {
-                      OList.Items.Add(null);
-                        if (mapObjects[i].objectName.Contains(objfind.Text))
+                    //  OList.Items.Add(null);
+                        if (mapObjects[i].getTitle().Contains(objfind.Text))
                         {
-                            OList.Items.Add( mapObjects[i].objectName);
+                            OList.Items.Add(mapObjects[i].getTitle());
                             secondList.Add(mapObjects[i]);      
                         }
                     }
                     else
                     {
-                        if (mapObjects[i].objectName.Contains(objfind.Text))
+                        if (mapObjects[i].getTitle().Contains(objfind.Text))
                         {
-                            OList.Items.Add(mapObjects[i].objectName);
+                            OList.Items.Add(mapObjects[i].getTitle());
                             secondList.Add(mapObjects[i]);
                         }
                     }
@@ -264,13 +251,12 @@ namespace Lab3
 
         private void OList_MouseLeave(object sender, MouseEventArgs e)
         {
-            OList.SelectedIndex = 0;
+           // OList.SelectedIndex = 0;
         }
 
         private void Clearpoints_Click(object sender, RoutedEventArgs e)
         {
-            rpointc = 0;
-            apointc = 0;
+            
             areapoints = new List<PointLatLng>();
             routepoints = new List<PointLatLng>();
             clearpoints.IsEnabled = true;

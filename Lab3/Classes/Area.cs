@@ -49,7 +49,7 @@ namespace Lab3.Classes
                     Stroke = Brushes.Black,
                     Fill = Brushes.Green,
                     Opacity = 0.5,
-                    ToolTip = objectName
+                    ToolTip = getTitle()
                 }
             };
 
