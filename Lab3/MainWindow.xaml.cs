@@ -28,7 +28,7 @@ namespace Lab3
           List<PointLatLng> areapoints = new List<PointLatLng>();
           List<PointLatLng> routepoints = new List<PointLatLng>();
         bool creationmode = false;
-        //private bool secondact = false;
+        private bool secondact = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -98,26 +98,52 @@ namespace Lab3
             {
                 case 4:
                     {
+                        if (points.Count < 3)
+                        {
+                            MessageBox.Show("Выберите точки");
+                            return;
+                        }
                         mapObject = new Area(OName.Text, points);
                         break;
                     }
                 case 0:
                     {
+                        if (points.Count < 1)
+                        {
+                            MessageBox.Show("Выберите точки");
+                            return;
+                        }
                         mapObject = new Location_c(OName.Text, points.Last());
                         break;
                     }
                 case 1:
                     {
+                        if (points.Count<1)
+                        {
+                            MessageBox.Show("Выберите точки");
+                            return;
+                        }
+
                         mapObject = new Car(OName.Text, points.Last());
                         break;
                     }
                 case 2:
                     {
+                        if (points.Count < 1)
+                        {
+                            MessageBox.Show("Выберите точки");
+                            return;
+                        }
                         mapObject = new Human(OName.Text, points.Last());
                         break;
                     }
                 case 3:
                     {
+                        if (points.Count < 2)
+                        {
+                            MessageBox.Show("Выберите точки");
+                            return;
+                        }
                         mapObject = new Route_c(OName.Text, points);
                         break;
                     }
