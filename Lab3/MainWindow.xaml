@@ -6,15 +6,16 @@
         xmlns:local="clr-namespace:Lab3"
         xmlns:WindowsPresentation="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation" x:Class="Lab3.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="549.667" Width="1000">
+        Title="MainWindow" Height="549.667" Width="1238.105">
     <Grid>
 
 
-        <Grid Name="Maps" Height="Auto" Width="Auto" Margin="250,5,5,5">
+        <Grid Name="Maps" Height="500" Width="700" Margin="250,5,5,5" HorizontalAlignment="Left">
             <WindowsPresentation:GMapControl Name="Map" Loaded="MapLoaded" MouseLeftButtonDown="Map_MouseLeftButtonDown" MouseDoubleClick="Map_MouseDoubleClick"/>
 
 
         </Grid>
+
         <ComboBox x:Name="combox" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="220" SelectionChanged="Combox_SelectionChanged">
             <ComboBoxItem>point</ComboBoxItem>
             <ComboBoxItem>car</ComboBoxItem>
@@ -34,5 +35,8 @@
         <Label Content="Name's here:" HorizontalAlignment="Left" Margin="7,218,0,0" VerticalAlignment="Top" Width="85" RenderTransformOrigin="0.483,0.5"/>
         <Button x:Name="locate" Content="LOCATE" HorizontalAlignment="Left" Height="26" Margin="100,274,0,0" VerticalAlignment="Top" Width="130" IsEnabled="False" Click="Locate_Click"/>
         <Button x:Name="clearpoints" Content="CLEAR POINTS" HorizontalAlignment="Left" Height="26" Margin="100,52,0,0" VerticalAlignment="Top" Width="130" IsEnabled="False" Click="Clearpoints_Click"/>
+        <Button x:Name="stuvk" Content="Button" HorizontalAlignment="Left" Margin="971,17,0,0" VerticalAlignment="Top" Width="249" Height="80" Click="stuvk_Click"/>
+        <ProgressBar x:Name="waybar" HorizontalAlignment="Left" Height="39" Margin="955,470,0,0" VerticalAlignment="Top" Width="265"/>
+        <CheckBox x:Name="taximod" Content="CheckBox" HorizontalAlignment="Left" Margin="971,102,0,0" VerticalAlignment="Top" Height="26" Width="249"/>
     </Grid>
 </Window>

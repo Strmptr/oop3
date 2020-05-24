@@ -8,12 +8,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Device.Location;
+using Lab3.Classes;
 
 namespace Lab3
 {
     class Human : MapObject
     {
-        PointLatLng point = new PointLatLng();
+
+        public PointLatLng point { get; set; }
+        public PointLatLng destinationPoint { get; set; }
+        public GMapMarker marker { get; private set; }
+
+        public event EventHandler seated;
+
 
         public Human(string name, PointLatLng Point) : base(name)
         {
@@ -34,7 +41,7 @@ namespace Lab3
 
         public override GMapMarker GetMarker()
         {
-            GMapMarker marker = new GMapMarker(point)
+            marker = new GMapMarker(point)
             {
                 Shape = new Image
                 {
@@ -47,6 +54,16 @@ namespace Lab3
             return marker;
         }
 
-        
+        public void CarArrived(object sender, EventArgs args)
+        {
+
+            System.Windows.MessageBox.Show("car is arrived ");
+            seated?.Invoke(this, EventArgs.Empty);
+            (sender as Car).Arrived -= CarArrived;
+
+
+        }
+
+
     }
 }

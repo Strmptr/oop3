@@ -17,6 +17,7 @@ using GMap.NET.MapProviders;
 using GMap.NET.WindowsPresentation;
 using System.Device.Location;
 using Lab3.Classes;
+using System.Threading;
 
 namespace Lab3
 {
@@ -29,6 +30,13 @@ namespace Lab3
           List<PointLatLng> routepoints = new List<PointLatLng>();
         bool creationmode = false;
         bool secondact = false;
+
+        RoutingProvider routingProvider = GMapProviders.OpenStreetMap;
+        static PointLatLng startOfRoute;
+        static PointLatLng endOfRoute;
+        List<PointLatLng> nearestPointPosition = new List<PointLatLng>();
+        List<MapObject> nearestObjects = new List<MapObject>();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -178,34 +186,48 @@ namespace Lab3
 
         private void Createra_Click(object sender, RoutedEventArgs e)
         {
+            bool exsist = false;
             if (OName.Text == "")
             {
                 MessageBox.Show("Object name is null");
             }
             else
-            {
-                createMarker(areapoints, combox.SelectedIndex);
-                OName.Text = "";
+                foreach (MapObject obj in mapObjects)
+                {
+                    if (obj.getTitle() == OName.Text)
+                    {
+                        MessageBox.Show("name already exist");
+                        exsist = true;
+                    }
 
-                locate.IsEnabled = true;
-                objfind.IsEnabled = true;
-                clearpoints.IsEnabled = false;
-                areapoints = new List<PointLatLng>();
-            }
-            OList.Items.Clear();
-            for (int i = 0; i < mapObjects.Count; i++)
+
+                }
+            if (!exsist)
             {
-                if (i == 0)
                 {
-                   // OList.Items.Add(null);
-                    OList.Items.Add(mapObjects[i].getTitle());
+                    createMarker(areapoints, combox.SelectedIndex);
+                    OName.Text = "";
+
+                    locate.IsEnabled = true;
+                    objfind.IsEnabled = true;
+                    clearpoints.IsEnabled = false;
+                    areapoints = new List<PointLatLng>();
                 }
-                else
+                OList.Items.Clear();
+                for (int i = 0; i < mapObjects.Count; i++)
                 {
-                    OList.Items.Add(mapObjects[i].getTitle());
+                    if (i == 0)
+                    {
+                        // OList.Items.Add(null);
+                        OList.Items.Add(mapObjects[i].getTitle());
+                    }
+                    else
+                    {
+                        OList.Items.Add(mapObjects[i].getTitle());
+                    }
                 }
+                secondact = false;
             }
-            secondact = false;
         }
 
         private void Combox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -292,6 +314,76 @@ namespace Lab3
         private void OName_TextChanged(object sender, TextChangedEventArgs e)
         {
 
+        }
+
+        private void Focus_Follow(object sender, EventArgs args)
+        {
+            Car c = (Car)sender;
+            waybar.Maximum = c.route.Points.Count;
+            Map.Position = c.getFocus();
+
+            if (waybar.Value == waybar.Maximum)
+                (sender as Car).Follow -= Focus_Follow;
+
+            if (waybar.Value != waybar.Maximum)
+                waybar.Value += 1;
+
+            else
+                waybar.Value = 0;
+
+        }
+
+        private void stuvk_Click(object sender, RoutedEventArgs e)
+        {
+            {
+                waybar.Value = 0;
+                foreach (MapObject obj in mapObjects)
+                    if (obj is Human)
+                        startOfRoute = (obj.getFocus());
+                endOfRoute = areapoints.Last();
+                var besidedObj = mapObjects.OrderBy(mapObject => mapObject.getDistance(startOfRoute));
+
+                Car nearestCar = null;
+                Human h = null;
+
+                foreach (MapObject obj in mapObjects)
+                {
+                    if (obj is Human)
+                    {
+                        h = (Human)obj;
+                        h.destinationPoint = endOfRoute;
+                        break;
+                    }
+                }
+
+                foreach (MapObject obj in besidedObj)
+                {
+                    if (obj is Car)
+                    {
+                        nearestCar = (Car)obj;
+                        break;
+                    }
+                }
+
+                var aaa = nearestCar.MoveTo(startOfRoute);
+                createMarker(aaa.Points, 3);
+
+                RoutingProvider routingProvider = GMapProviders.OpenStreetMap;
+                MapRoute route = routingProvider.GetRoute(
+                    startOfRoute,
+                    endOfRoute,
+                    false,
+                    false,
+                    15);
+                createMarker(route.Points, 3);
+                nearestCar.Arrived += h.CarArrived;
+                h.seated += nearestCar.getintocar;
+                nearestCar.Follow += Focus_Follow;
+
+
+                //  nearestCar.Arrived -= h.CarArrived;
+                //  h.seated -= nearestCar.getintocar;
+            }
         }
     }
 
